@@ -1,0 +1,16 @@
+﻿
+> sqli-reuse-study@1.0.0 test
+> node --test
+
+✔ SQL catalog maps all placeholders and keeps stable reuse locations (1.8638ms)
+✔ executor sends separate parameters and accepts only registered variants (0.9058ms)
+✔ binding comparison counts each position once and excludes fixed-template selectors (0.3919ms)
+✔ invalid request data is rejected before business queries (120.939ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 788.6517

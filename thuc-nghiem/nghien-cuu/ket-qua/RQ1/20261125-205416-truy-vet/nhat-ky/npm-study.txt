@@ -1,0 +1,13 @@
+﻿
+> sqli-reuse-study@1.0.0 study
+> node --env-file-if-exists=.env src/cli.js study --out nghien-cuu/ket-qua/RQ1/20261125-205416-truy-vet/du-lieu-goc
+
+npm.cmd : .env not found. Continuing without it.
+At line:17 char:5
++     & npm.cmd @npmArgs 2>&1 | Out-File -Encoding utf8 -FilePath (Join ...
++     ~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (.env not found. Continuing without it.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Z:\SQLi2\thuc-nghiem\nghien-cuu\ket-qua\RQ1\20261125-205416-truy-vet\du-lieu-goc\run-s21uql\report.md
+Z:\SQLi2\thuc-nghiem\nghien-cuu\ket-qua\RQ1\20261125-205416-truy-vet\du-lieu-goc\run-s21uql\report.json

@@ -1,0 +1,12 @@
+﻿
+> sqli-reuse-study@1.0.0 init
+> node --env-file-if-exists=.env src/cli.js init
+
+npm.cmd : .env not found. Continuing without it.
+At line:17 char:5
++     & npm.cmd @npmArgs 2>&1 | Out-File -Encoding utf8 -FilePath (Join ...
++     ~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (.env not found. Continuing without it.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Đã chuẩn bị bảng và danh mục mẫu.
