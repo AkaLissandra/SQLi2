@@ -1,0 +1,6 @@
+
+> sqli-reuse-study@1.0.0 init
+> node --env-file-if-exists=.env src/cli.js init
+
+.env not found. Continuing without it.
+Đã chuẩn bị bảng và danh mục mẫu.

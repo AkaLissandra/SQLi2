@@ -1,0 +1,144 @@
+﻿node nghien-cuu/ket-qua/RQ3/20261125-211408-bao-phu/kiem-chung.mjs nghien-cuu/ket-qua/RQ3/20261125-211408-bao-phu/du-lieu-goc/run-bmnuSh/report.json
+exit=0
+{
+  "denominator": {
+    "sites": [
+      "PREVIEW_CATEGORY",
+      "PREVIEW_BUDGET",
+      "EXPORT_SEARCH"
+    ],
+    "templates": [
+      "PREVIEW_CATEGORY/name",
+      "PREVIEW_CATEGORY/price",
+      "PREVIEW_BUDGET/name",
+      "PREVIEW_BUDGET/price",
+      "EXPORT_SEARCH/name",
+      "EXPORT_SEARCH/price"
+    ]
+  },
+  "requestCount": 60,
+  "searchIdCount": 44,
+  "evidenceRows": 104,
+  "suites": [
+    {
+      "suite": "chain",
+      "requestCount": 20,
+      "sites": [
+        "PREVIEW_CATEGORY",
+        "PREVIEW_BUDGET",
+        "EXPORT_SEARCH"
+      ],
+      "missingSites": [],
+      "templates": [
+        "PREVIEW_CATEGORY/name",
+        "PREVIEW_CATEGORY/price",
+        "PREVIEW_BUDGET/name",
+        "PREVIEW_BUDGET/price",
+        "EXPORT_SEARCH/name",
+        "EXPORT_SEARCH/price"
+      ],
+      "missingTemplates": [],
+      "statuses": {
+        "200": 16,
+        "201": 4
+      }
+    },
+    {
+      "suite": "state_matched_fixture",
+      "requestCount": 20,
+      "sites": [
+        "PREVIEW_CATEGORY",
+        "PREVIEW_BUDGET",
+        "EXPORT_SEARCH"
+      ],
+      "missingSites": [],
+      "templates": [
+        "PREVIEW_CATEGORY/name",
+        "PREVIEW_CATEGORY/price",
+        "PREVIEW_BUDGET/name",
+        "PREVIEW_BUDGET/price",
+        "EXPORT_SEARCH/name",
+        "EXPORT_SEARCH/price"
+      ],
+      "missingTemplates": [],
+      "statuses": {
+        "200": 16,
+        "201": 4
+      }
+    },
+    {
+      "suite": "draft_fixture",
+      "requestCount": 20,
+      "sites": [
+        "PREVIEW_CATEGORY",
+        "PREVIEW_BUDGET"
+      ],
+      "missingSites": [
+        "EXPORT_SEARCH"
+      ],
+      "templates": [
+        "PREVIEW_CATEGORY/name",
+        "PREVIEW_CATEGORY/price",
+        "PREVIEW_BUDGET/name",
+        "PREVIEW_BUDGET/price"
+      ],
+      "missingTemplates": [
+        "EXPORT_SEARCH/name",
+        "EXPORT_SEARCH/price"
+      ],
+      "statuses": {
+        "200": 12,
+        "201": 4,
+        "409": 4
+      }
+    }
+  ],
+  "comparisons": [
+    {
+      "a": "chain",
+      "b": "state_matched_fixture",
+      "siteDelta": 0,
+      "templateDelta": 0,
+      "sitePercentagePoints": "0.0",
+      "templatePercentagePoints": "0.0",
+      "sitesOnlyA": [],
+      "sitesOnlyB": [],
+      "templatesOnlyA": [],
+      "templatesOnlyB": []
+    },
+    {
+      "a": "state_matched_fixture",
+      "b": "draft_fixture",
+      "siteDelta": 1,
+      "templateDelta": 2,
+      "sitePercentagePoints": "33.3",
+      "templatePercentagePoints": "33.3",
+      "sitesOnlyA": [
+        "EXPORT_SEARCH"
+      ],
+      "sitesOnlyB": [],
+      "templatesOnlyA": [
+        "EXPORT_SEARCH/name",
+        "EXPORT_SEARCH/price"
+      ],
+      "templatesOnlyB": []
+    },
+    {
+      "a": "chain",
+      "b": "draft_fixture",
+      "siteDelta": 1,
+      "templateDelta": 2,
+      "sitePercentagePoints": "33.3",
+      "templatePercentagePoints": "33.3",
+      "sitesOnlyA": [
+        "EXPORT_SEARCH"
+      ],
+      "sitesOnlyB": [],
+      "templatesOnlyA": [
+        "EXPORT_SEARCH/name",
+        "EXPORT_SEARCH/price"
+      ],
+      "templatesOnlyB": []
+    }
+  ]
+}
