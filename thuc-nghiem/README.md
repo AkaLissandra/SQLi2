@@ -2,6 +2,8 @@
 
 Ứng dụng HTTP cục bộ lưu một bộ lọc danh mục rồi sử dụng lại dữ liệu đã lưu khi xem trước và xuất danh mục. Bộ lọc có nhóm sản phẩm, thứ tự sắp xếp và trần giá tùy chọn. Người dùng công bố bộ lọc để mở thao tác xuất. Thiết kế này cho phép theo dõi từng giá trị đi từ yêu cầu ghi đến các vị trí SQL đọc lại.
 
+Để giao cho AI thực hiện và lưu hồ sơ cho từng câu hỏi, dùng `thực hiện nghiên cứu RQ1`, `thực hiện nghiên cứu RQ2` hoặc `thực hiện nghiên cứu RQ3` từ thư mục gốc. Xem [quy trình nghiên cứu](nghien-cuu/README.md) để biết tiêu chí đo và đầu ra.
+
 ## Chạy thí nghiệm
 
 Yêu cầu Node.js từ 22.9.0 và MySQL 8.0.46. Có thể dùng Docker Compose để dựng MySQL hoặc kết nối đến MySQL đã có. Thực hiện các lệnh từ thư mục `thuc-nghiem`.
