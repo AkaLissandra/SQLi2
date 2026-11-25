@@ -1,0 +1,3159 @@
+{
+  "environment": {
+    "mysql": "8.0.46",
+    "driver": "3.24.6",
+    "node": "v24.21.0",
+    "runAt": "2026-11-25T14:06:01.831Z"
+  },
+  "cases": [
+    {
+      "category": "Đồ của O'Brien",
+      "name": "name-unlimited",
+      "sort": "name",
+      "ceiling": null,
+      "expectedIds": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "category": "Đồ của O'Brien",
+      "name": "price-unlimited",
+      "sort": "price",
+      "ceiling": null,
+      "expectedIds": [
+        3,
+        2,
+        1
+      ]
+    },
+    {
+      "category": "Đồ của O'Brien",
+      "name": "name-budget",
+      "sort": "name",
+      "ceiling": 250000,
+      "expectedIds": [
+        2,
+        3
+      ]
+    },
+    {
+      "category": "Đồ của O'Brien",
+      "name": "price-budget",
+      "sort": "price",
+      "ceiling": 250000,
+      "expectedIds": [
+        3,
+        2
+      ]
+    }
+  ],
+  "rq1": [
+    {
+      "site": "SAVE_SEARCH",
+      "templates": {
+        "fixed": "INSERT INTO study_searches (id, category, sort_key, ceiling_dong, state) VALUES (?, ?, ?, ?, 'draft')"
+      },
+      "bindings": [
+        {
+          "field": "id",
+          "source": "request"
+        },
+        {
+          "field": "category",
+          "source": "request"
+        },
+        {
+          "field": "sort",
+          "source": "request"
+        },
+        {
+          "field": "ceiling",
+          "source": "request"
+        }
+      ],
+      "selectors": [],
+      "reusesStoredData": false
+    },
+    {
+      "site": "LOAD_SEARCH",
+      "templates": {
+        "fixed": "SELECT id, category, sort_key AS sort, ceiling_dong AS ceiling, state FROM study_searches WHERE id = ?"
+      },
+      "bindings": [
+        {
+          "field": "id",
+          "source": "request"
+        }
+      ],
+      "selectors": [],
+      "reusesStoredData": false
+    },
+    {
+      "site": "PUBLISH_SEARCH",
+      "templates": {
+        "fixed": "UPDATE study_searches SET state = 'published' WHERE id = ? AND state = 'draft'"
+      },
+      "bindings": [
+        {
+          "field": "id",
+          "source": "request"
+        }
+      ],
+      "selectors": [],
+      "reusesStoredData": false
+    },
+    {
+      "site": "PREVIEW_CATEGORY",
+      "templates": {
+        "name": "SELECT item_id, name, price_dong FROM study_items WHERE category = ? ORDER BY name ASC, item_id ASC",
+        "price": "SELECT item_id, name, price_dong FROM study_items WHERE category = ? ORDER BY price_dong ASC, item_id ASC"
+      },
+      "bindings": [
+        {
+          "field": "category",
+          "source": "stored"
+        }
+      ],
+      "selectors": [
+        {
+          "field": "ceiling",
+          "source": "stored",
+          "effect": "site"
+        },
+        {
+          "field": "sort",
+          "source": "stored",
+          "effect": "variant"
+        }
+      ],
+      "reusesStoredData": true
+    },
+    {
+      "site": "PREVIEW_BUDGET",
+      "templates": {
+        "name": "SELECT item_id, name, price_dong FROM study_items WHERE category = ? AND price_dong <= ? ORDER BY name ASC, item_id ASC",
+        "price": "SELECT item_id, name, price_dong FROM study_items WHERE category = ? AND price_dong <= ? ORDER BY price_dong ASC, item_id ASC"
+      },
+      "bindings": [
+        {
+          "field": "category",
+          "source": "stored"
+        },
+        {
+          "field": "ceiling",
+          "source": "stored"
+        }
+      ],
+      "selectors": [
+        {
+          "field": "ceiling",
+          "source": "stored",
+          "effect": "site"
+        },
+        {
+          "field": "sort",
+          "source": "stored",
+          "effect": "variant"
+        }
+      ],
+      "reusesStoredData": true
+    },
+    {
+      "site": "EXPORT_SEARCH",
+      "templates": {
+        "name": "SELECT item_id, name, price_dong FROM study_items WHERE category = ? AND (? IS NULL OR price_dong <= ?) ORDER BY name ASC, item_id ASC",
+        "price": "SELECT item_id, name, price_dong FROM study_items WHERE category = ? AND (? IS NULL OR price_dong <= ?) ORDER BY price_dong ASC, item_id ASC"
+      },
+      "bindings": [
+        {
+          "field": "category",
+          "source": "stored"
+        },
+        {
+          "field": "ceiling",
+          "source": "stored"
+        },
+        {
+          "field": "ceiling",
+          "source": "stored"
+        }
+      ],
+      "selectors": [
+        {
+          "field": "state",
+          "source": "stored",
+          "effect": "execution_gate"
+        },
+        {
+          "field": "sort",
+          "source": "stored",
+          "effect": "variant"
+        }
+      ],
+      "reusesStoredData": true
+    }
+  ],
+  "rq2": {
+    "method": "metadata_counterfactual",
+    "observedSites": [
+      "SAVE_SEARCH",
+      "LOAD_SEARCH",
+      "PREVIEW_CATEGORY",
+      "PUBLISH_SEARCH",
+      "EXPORT_SEARCH",
+      "PREVIEW_BUDGET"
+    ],
+    "writeOnly": {
+      "violationCount": 3,
+      "sites": [
+        "PREVIEW_CATEGORY",
+        "EXPORT_SEARCH",
+        "PREVIEW_BUDGET"
+      ]
+    },
+    "writeAndReuse": {
+      "violationCount": 0,
+      "sites": []
+    },
+    "reduction": 3,
+    "sites": [
+      {
+        "site": "SAVE_SEARCH",
+        "modeledUnboundSlots": [],
+        "observedUnboundSlots": []
+      },
+      {
+        "site": "LOAD_SEARCH",
+        "modeledUnboundSlots": [],
+        "observedUnboundSlots": []
+      },
+      {
+        "site": "PREVIEW_CATEGORY",
+        "modeledUnboundSlots": [
+          {
+            "source": "stored",
+            "field": "category",
+            "slot": 1
+          }
+        ],
+        "observedUnboundSlots": []
+      },
+      {
+        "site": "PUBLISH_SEARCH",
+        "modeledUnboundSlots": [],
+        "observedUnboundSlots": []
+      },
+      {
+        "site": "EXPORT_SEARCH",
+        "modeledUnboundSlots": [
+          {
+            "source": "stored",
+            "field": "category",
+            "slot": 1
+          },
+          {
+            "source": "stored",
+            "field": "ceiling",
+            "slot": 2
+          },
+          {
+            "source": "stored",
+            "field": "ceiling",
+            "slot": 3
+          }
+        ],
+        "observedUnboundSlots": []
+      },
+      {
+        "site": "PREVIEW_BUDGET",
+        "modeledUnboundSlots": [
+          {
+            "source": "stored",
+            "field": "category",
+            "slot": 1
+          },
+          {
+            "source": "stored",
+            "field": "ceiling",
+            "slot": 2
+          }
+        ],
+        "observedUnboundSlots": []
+      }
+    ]
+  },
+  "rq3": {
+    "denominator": {
+      "sites": [
+        "PREVIEW_CATEGORY",
+        "PREVIEW_BUDGET",
+        "EXPORT_SEARCH"
+      ],
+      "templates": [
+        "PREVIEW_CATEGORY/name",
+        "PREVIEW_CATEGORY/price",
+        "PREVIEW_BUDGET/name",
+        "PREVIEW_BUDGET/price",
+        "EXPORT_SEARCH/name",
+        "EXPORT_SEARCH/price"
+      ]
+    },
+    "suites": [
+      {
+        "suite": "draft_fixture",
+        "requestCount": 20,
+        "sites": [
+          "PREVIEW_CATEGORY",
+          "PREVIEW_BUDGET"
+        ],
+        "missingSites": [
+          "EXPORT_SEARCH"
+        ],
+        "templates": [
+          "PREVIEW_CATEGORY/name",
+          "PREVIEW_CATEGORY/price",
+          "PREVIEW_BUDGET/name",
+          "PREVIEW_BUDGET/price"
+        ],
+        "missingTemplates": [
+          "EXPORT_SEARCH/name",
+          "EXPORT_SEARCH/price"
+        ]
+      },
+      {
+        "suite": "chain",
+        "requestCount": 20,
+        "sites": [
+          "PREVIEW_CATEGORY",
+          "PREVIEW_BUDGET",
+          "EXPORT_SEARCH"
+        ],
+        "missingSites": [],
+        "templates": [
+          "PREVIEW_CATEGORY/name",
+          "PREVIEW_CATEGORY/price",
+          "PREVIEW_BUDGET/name",
+          "PREVIEW_BUDGET/price",
+          "EXPORT_SEARCH/name",
+          "EXPORT_SEARCH/price"
+        ],
+        "missingTemplates": []
+      },
+      {
+        "suite": "state_matched_fixture",
+        "requestCount": 20,
+        "sites": [
+          "PREVIEW_CATEGORY",
+          "PREVIEW_BUDGET",
+          "EXPORT_SEARCH"
+        ],
+        "missingSites": [],
+        "templates": [
+          "PREVIEW_CATEGORY/name",
+          "PREVIEW_CATEGORY/price",
+          "PREVIEW_BUDGET/name",
+          "PREVIEW_BUDGET/price",
+          "EXPORT_SEARCH/name",
+          "EXPORT_SEARCH/price"
+        ],
+        "missingTemplates": []
+      }
+    ],
+    "differences": [
+      {
+        "site": "EXPORT_SEARCH",
+        "templates": [
+          "EXPORT_SEARCH/name",
+          "EXPORT_SEARCH/price"
+        ],
+        "fixtureEvidence": [
+          {
+            "case": "name-unlimited",
+            "requestId": "cdd5809a-5bcb-4f20-ac7a-1893e6765fba",
+            "status": 409,
+            "state": "draft"
+          },
+          {
+            "case": "price-unlimited",
+            "requestId": "2a0ee8db-d09a-4729-a5f7-08cfe55f56a4",
+            "status": 409,
+            "state": "draft"
+          },
+          {
+            "case": "name-budget",
+            "requestId": "97d6295c-db53-4f09-b874-625035113da3",
+            "status": 409,
+            "state": "draft"
+          },
+          {
+            "case": "price-budget",
+            "requestId": "c51244eb-7fa6-450a-924f-6084dac1dba4",
+            "status": 409,
+            "state": "draft"
+          }
+        ]
+      }
+    ]
+  },
+  "runs": [
+    {
+      "suite": "draft_fixture",
+      "requests": [
+        {
+          "case": "name-unlimited",
+          "operation": "save",
+          "startingState": null,
+          "searchId": "06d97aa8-d2bd-4d2d-89b6-1e0cd8d42a23",
+          "requestId": "9cddf8b6-41b5-497c-8a8e-94193e518c34",
+          "method": "PUT",
+          "status": 201,
+          "trace": [
+            {
+              "type": "sql",
+              "site": "SAVE_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 2,
+                  "source": "request",
+                  "field": "category",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 3,
+                  "source": "request",
+                  "field": "sort",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 4,
+                  "source": "request",
+                  "field": "ceiling",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "affectedRows": 1
+            }
+          ]
+        },
+        {
+          "case": "name-unlimited",
+          "operation": "load",
+          "startingState": "draft",
+          "searchId": "5f30b8d9-7fbd-4794-bbc0-0e028dbb6648",
+          "requestId": "72bb8e65-e441-4d4f-98ed-3388b4bd004a",
+          "method": "GET",
+          "status": 200,
+          "trace": [
+            {
+              "type": "sql",
+              "site": "LOAD_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "rowCount": 1
+            }
+          ]
+        },
+        {
+          "case": "name-unlimited",
+          "operation": "preview",
+          "startingState": "draft",
+          "searchId": "b6242502-ecf4-4031-aa5f-4d453f10ed90",
+          "requestId": "4b554f4c-f0c9-4d8f-a3ea-7c0d9ee83126",
+          "method": "GET",
+          "status": 200,
+          "itemIds": [
+            1,
+            2,
+            3
+          ],
+          "trace": [
+            {
+              "type": "sql",
+              "site": "LOAD_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "rowCount": 1
+            },
+            {
+              "type": "decision",
+              "rule": "preview_ceiling",
+              "hasCeiling": false,
+              "site": "PREVIEW_CATEGORY"
+            },
+            {
+              "type": "sql",
+              "site": "PREVIEW_CATEGORY",
+              "variant": "name",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "stored",
+                  "field": "category",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [
+                {
+                  "field": "ceiling",
+                  "source": "stored",
+                  "effect": "site"
+                },
+                {
+                  "field": "sort",
+                  "source": "stored",
+                  "effect": "variant"
+                }
+              ],
+              "rowCount": 3
+            }
+          ]
+        },
+        {
+          "case": "name-unlimited",
+          "operation": "publish",
+          "startingState": "draft",
+          "searchId": "8a830c65-125b-4542-8c1a-a0646d608fd2",
+          "requestId": "50673ec1-a171-4a5c-98fe-735610bf7bf4",
+          "method": "POST",
+          "status": 200,
+          "trace": [
+            {
+              "type": "sql",
+              "site": "PUBLISH_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "affectedRows": 1
+            }
+          ]
+        },
+        {
+          "case": "name-unlimited",
+          "operation": "export",
+          "startingState": "draft",
+          "searchId": "9e6f46d4-4257-4313-8cf2-f2a7418eb6f2",
+          "requestId": "cdd5809a-5bcb-4f20-ac7a-1893e6765fba",
+          "method": "GET",
+          "status": 409,
+          "trace": [
+            {
+              "type": "sql",
+              "site": "LOAD_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "rowCount": 1
+            },
+            {
+              "type": "decision",
+              "rule": "export_requires_published",
+              "state": "draft",
+              "allowed": false
+            }
+          ]
+        },
+        {
+          "case": "price-unlimited",
+          "operation": "save",
+          "startingState": null,
+          "searchId": "e409c478-86a9-4a5f-9380-0fe458da0d53",
+          "requestId": "f0ea710b-d37b-4a0e-b2a5-3469d6a2b12f",
+          "method": "PUT",
+          "status": 201,
+          "trace": [
+            {
+              "type": "sql",
+              "site": "SAVE_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 2,
+                  "source": "request",
+                  "field": "category",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 3,
+                  "source": "request",
+                  "field": "sort",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 4,
+                  "source": "request",
+                  "field": "ceiling",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "affectedRows": 1
+            }
+          ]
+        },
+        {
+          "case": "price-unlimited",
+          "operation": "load",
+          "startingState": "draft",
+          "searchId": "8137af70-300a-4525-bf64-ce7860438a40",
+          "requestId": "600631ac-d3e2-4bef-b385-e8e4d502e183",
+          "method": "GET",
+          "status": 200,
+          "trace": [
+            {
+              "type": "sql",
+              "site": "LOAD_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "rowCount": 1
+            }
+          ]
+        },
+        {
+          "case": "price-unlimited",
+          "operation": "preview",
+          "startingState": "draft",
+          "searchId": "d35f4fe5-aa11-466c-bfab-f583e9e036e4",
+          "requestId": "fb2a2327-c6c0-4506-9d68-289fa383ec25",
+          "method": "GET",
+          "status": 200,
+          "itemIds": [
+            3,
+            2,
+            1
+          ],
+          "trace": [
+            {
+              "type": "sql",
+              "site": "LOAD_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "rowCount": 1
+            },
+            {
+              "type": "decision",
+              "rule": "preview_ceiling",
+              "hasCeiling": false,
+              "site": "PREVIEW_CATEGORY"
+            },
+            {
+              "type": "sql",
+              "site": "PREVIEW_CATEGORY",
+              "variant": "price",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "stored",
+                  "field": "category",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [
+                {
+                  "field": "ceiling",
+                  "source": "stored",
+                  "effect": "site"
+                },
+                {
+                  "field": "sort",
+                  "source": "stored",
+                  "effect": "variant"
+                }
+              ],
+              "rowCount": 3
+            }
+          ]
+        },
+        {
+          "case": "price-unlimited",
+          "operation": "publish",
+          "startingState": "draft",
+          "searchId": "b2a678e5-b5a9-40cd-bb74-e5d53fd316c3",
+          "requestId": "6932c5f5-8adb-4b7b-b850-826141f5d8cf",
+          "method": "POST",
+          "status": 200,
+          "trace": [
+            {
+              "type": "sql",
+              "site": "PUBLISH_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "affectedRows": 1
+            }
+          ]
+        },
+        {
+          "case": "price-unlimited",
+          "operation": "export",
+          "startingState": "draft",
+          "searchId": "ccfc63ee-dba3-4821-af6e-2e8a7830a7fc",
+          "requestId": "2a0ee8db-d09a-4729-a5f7-08cfe55f56a4",
+          "method": "GET",
+          "status": 409,
+          "trace": [
+            {
+              "type": "sql",
+              "site": "LOAD_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "rowCount": 1
+            },
+            {
+              "type": "decision",
+              "rule": "export_requires_published",
+              "state": "draft",
+              "allowed": false
+            }
+          ]
+        },
+        {
+          "case": "name-budget",
+          "operation": "save",
+          "startingState": null,
+          "searchId": "379802e4-eec7-4c18-9b98-32ad7af2b62f",
+          "requestId": "b0e48501-1a81-40e9-b8a4-c61e668d45f1",
+          "method": "PUT",
+          "status": 201,
+          "trace": [
+            {
+              "type": "sql",
+              "site": "SAVE_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 2,
+                  "source": "request",
+                  "field": "category",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 3,
+                  "source": "request",
+                  "field": "sort",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 4,
+                  "source": "request",
+                  "field": "ceiling",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "affectedRows": 1
+            }
+          ]
+        },
+        {
+          "case": "name-budget",
+          "operation": "load",
+          "startingState": "draft",
+          "searchId": "61fa81f3-6c7f-43bc-9946-efc9bc00917c",
+          "requestId": "9de3180c-9b73-45a8-95ee-186f716c7035",
+          "method": "GET",
+          "status": 200,
+          "trace": [
+            {
+              "type": "sql",
+              "site": "LOAD_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "rowCount": 1
+            }
+          ]
+        },
+        {
+          "case": "name-budget",
+          "operation": "preview",
+          "startingState": "draft",
+          "searchId": "5301c83d-74d1-44f3-9074-b951518f6e30",
+          "requestId": "a9219a04-5c29-42ca-9dba-2f0d3b772b6a",
+          "method": "GET",
+          "status": 200,
+          "itemIds": [
+            2,
+            3
+          ],
+          "trace": [
+            {
+              "type": "sql",
+              "site": "LOAD_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "rowCount": 1
+            },
+            {
+              "type": "decision",
+              "rule": "preview_ceiling",
+              "hasCeiling": true,
+              "site": "PREVIEW_BUDGET"
+            },
+            {
+              "type": "sql",
+              "site": "PREVIEW_BUDGET",
+              "variant": "name",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "stored",
+                  "field": "category",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 2,
+                  "source": "stored",
+                  "field": "ceiling",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [
+                {
+                  "field": "ceiling",
+                  "source": "stored",
+                  "effect": "site"
+                },
+                {
+                  "field": "sort",
+                  "source": "stored",
+                  "effect": "variant"
+                }
+              ],
+              "rowCount": 2
+            }
+          ]
+        },
+        {
+          "case": "name-budget",
+          "operation": "publish",
+          "startingState": "draft",
+          "searchId": "e1263808-3487-4b8f-a956-437c20e78c15",
+          "requestId": "cdfd067f-97cc-4249-85ba-65b26378d95d",
+          "method": "POST",
+          "status": 200,
+          "trace": [
+            {
+              "type": "sql",
+              "site": "PUBLISH_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "affectedRows": 1
+            }
+          ]
+        },
+        {
+          "case": "name-budget",
+          "operation": "export",
+          "startingState": "draft",
+          "searchId": "876b96d4-6b3f-445c-a2fd-2852e6b2ea40",
+          "requestId": "97d6295c-db53-4f09-b874-625035113da3",
+          "method": "GET",
+          "status": 409,
+          "trace": [
+            {
+              "type": "sql",
+              "site": "LOAD_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "rowCount": 1
+            },
+            {
+              "type": "decision",
+              "rule": "export_requires_published",
+              "state": "draft",
+              "allowed": false
+            }
+          ]
+        },
+        {
+          "case": "price-budget",
+          "operation": "save",
+          "startingState": null,
+          "searchId": "25006d01-d525-4684-85ac-db47bcab9595",
+          "requestId": "dfc143d6-b785-4d74-9b5f-8dc657e7516f",
+          "method": "PUT",
+          "status": 201,
+          "trace": [
+            {
+              "type": "sql",
+              "site": "SAVE_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 2,
+                  "source": "request",
+                  "field": "category",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 3,
+                  "source": "request",
+                  "field": "sort",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 4,
+                  "source": "request",
+                  "field": "ceiling",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "affectedRows": 1
+            }
+          ]
+        },
+        {
+          "case": "price-budget",
+          "operation": "load",
+          "startingState": "draft",
+          "searchId": "b35601f9-a6af-4bf5-9c12-8fed1b53e95d",
+          "requestId": "a6d83b8b-c704-46ef-b938-5c2f7b521b96",
+          "method": "GET",
+          "status": 200,
+          "trace": [
+            {
+              "type": "sql",
+              "site": "LOAD_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "rowCount": 1
+            }
+          ]
+        },
+        {
+          "case": "price-budget",
+          "operation": "preview",
+          "startingState": "draft",
+          "searchId": "9c543797-faa3-44c8-9647-b794cf57cd5c",
+          "requestId": "6c05936f-8b14-44f7-8ab8-381c5138bddd",
+          "method": "GET",
+          "status": 200,
+          "itemIds": [
+            3,
+            2
+          ],
+          "trace": [
+            {
+              "type": "sql",
+              "site": "LOAD_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "rowCount": 1
+            },
+            {
+              "type": "decision",
+              "rule": "preview_ceiling",
+              "hasCeiling": true,
+              "site": "PREVIEW_BUDGET"
+            },
+            {
+              "type": "sql",
+              "site": "PREVIEW_BUDGET",
+              "variant": "price",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "stored",
+                  "field": "category",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 2,
+                  "source": "stored",
+                  "field": "ceiling",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [
+                {
+                  "field": "ceiling",
+                  "source": "stored",
+                  "effect": "site"
+                },
+                {
+                  "field": "sort",
+                  "source": "stored",
+                  "effect": "variant"
+                }
+              ],
+              "rowCount": 2
+            }
+          ]
+        },
+        {
+          "case": "price-budget",
+          "operation": "publish",
+          "startingState": "draft",
+          "searchId": "6aa55f32-4b92-418b-b149-ad2ff643d8bf",
+          "requestId": "8af43ef8-0aca-4735-856e-1db1a1e64ca0",
+          "method": "POST",
+          "status": 200,
+          "trace": [
+            {
+              "type": "sql",
+              "site": "PUBLISH_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "affectedRows": 1
+            }
+          ]
+        },
+        {
+          "case": "price-budget",
+          "operation": "export",
+          "startingState": "draft",
+          "searchId": "97ae1e22-76d2-4e49-b3e6-021dab0fba6d",
+          "requestId": "c51244eb-7fa6-450a-924f-6084dac1dba4",
+          "method": "GET",
+          "status": 409,
+          "trace": [
+            {
+              "type": "sql",
+              "site": "LOAD_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "rowCount": 1
+            },
+            {
+              "type": "decision",
+              "rule": "export_requires_published",
+              "state": "draft",
+              "allowed": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "suite": "chain",
+      "requests": [
+        {
+          "case": "name-unlimited",
+          "operation": "save",
+          "startingState": null,
+          "searchId": "fa0d4c6e-2bf8-4d1f-8fb2-43d4daf940ca",
+          "requestId": "e1f16ffd-7680-4d3e-acd0-1086c393caf2",
+          "method": "PUT",
+          "status": 201,
+          "trace": [
+            {
+              "type": "sql",
+              "site": "SAVE_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 2,
+                  "source": "request",
+                  "field": "category",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 3,
+                  "source": "request",
+                  "field": "sort",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 4,
+                  "source": "request",
+                  "field": "ceiling",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "affectedRows": 1
+            }
+          ]
+        },
+        {
+          "case": "name-unlimited",
+          "operation": "load",
+          "startingState": "draft",
+          "searchId": "fa0d4c6e-2bf8-4d1f-8fb2-43d4daf940ca",
+          "requestId": "6ff817e3-1f82-4afc-873e-10d1b03fe066",
+          "method": "GET",
+          "status": 200,
+          "trace": [
+            {
+              "type": "sql",
+              "site": "LOAD_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "rowCount": 1
+            }
+          ]
+        },
+        {
+          "case": "name-unlimited",
+          "operation": "preview",
+          "startingState": "draft",
+          "searchId": "fa0d4c6e-2bf8-4d1f-8fb2-43d4daf940ca",
+          "requestId": "fa848fa7-8b99-441e-9508-6bf6f8cfbefa",
+          "method": "GET",
+          "status": 200,
+          "itemIds": [
+            1,
+            2,
+            3
+          ],
+          "trace": [
+            {
+              "type": "sql",
+              "site": "LOAD_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "rowCount": 1
+            },
+            {
+              "type": "decision",
+              "rule": "preview_ceiling",
+              "hasCeiling": false,
+              "site": "PREVIEW_CATEGORY"
+            },
+            {
+              "type": "sql",
+              "site": "PREVIEW_CATEGORY",
+              "variant": "name",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "stored",
+                  "field": "category",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [
+                {
+                  "field": "ceiling",
+                  "source": "stored",
+                  "effect": "site"
+                },
+                {
+                  "field": "sort",
+                  "source": "stored",
+                  "effect": "variant"
+                }
+              ],
+              "rowCount": 3
+            }
+          ]
+        },
+        {
+          "case": "name-unlimited",
+          "operation": "publish",
+          "startingState": "draft",
+          "searchId": "fa0d4c6e-2bf8-4d1f-8fb2-43d4daf940ca",
+          "requestId": "fc29e00a-88e1-44cf-a418-66874fb74b9a",
+          "method": "POST",
+          "status": 200,
+          "trace": [
+            {
+              "type": "sql",
+              "site": "PUBLISH_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "affectedRows": 1
+            }
+          ]
+        },
+        {
+          "case": "name-unlimited",
+          "operation": "export",
+          "startingState": "published",
+          "searchId": "fa0d4c6e-2bf8-4d1f-8fb2-43d4daf940ca",
+          "requestId": "954c969a-3638-4a92-aa49-47dabc20e3c8",
+          "method": "GET",
+          "status": 200,
+          "itemIds": [
+            1,
+            2,
+            3
+          ],
+          "trace": [
+            {
+              "type": "sql",
+              "site": "LOAD_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "rowCount": 1
+            },
+            {
+              "type": "decision",
+              "rule": "export_requires_published",
+              "state": "published",
+              "allowed": true
+            },
+            {
+              "type": "sql",
+              "site": "EXPORT_SEARCH",
+              "variant": "name",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "stored",
+                  "field": "category",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 2,
+                  "source": "stored",
+                  "field": "ceiling",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 3,
+                  "source": "stored",
+                  "field": "ceiling",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [
+                {
+                  "field": "state",
+                  "source": "stored",
+                  "effect": "execution_gate"
+                },
+                {
+                  "field": "sort",
+                  "source": "stored",
+                  "effect": "variant"
+                }
+              ],
+              "rowCount": 3
+            }
+          ]
+        },
+        {
+          "case": "price-unlimited",
+          "operation": "save",
+          "startingState": null,
+          "searchId": "c36f0d9a-8637-461e-a937-c27f140b1784",
+          "requestId": "d756e434-8ec4-4126-8662-b1bcd5608e06",
+          "method": "PUT",
+          "status": 201,
+          "trace": [
+            {
+              "type": "sql",
+              "site": "SAVE_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 2,
+                  "source": "request",
+                  "field": "category",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 3,
+                  "source": "request",
+                  "field": "sort",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 4,
+                  "source": "request",
+                  "field": "ceiling",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "affectedRows": 1
+            }
+          ]
+        },
+        {
+          "case": "price-unlimited",
+          "operation": "load",
+          "startingState": "draft",
+          "searchId": "c36f0d9a-8637-461e-a937-c27f140b1784",
+          "requestId": "b0cbd190-6b08-4804-b7b8-1acd26c57db5",
+          "method": "GET",
+          "status": 200,
+          "trace": [
+            {
+              "type": "sql",
+              "site": "LOAD_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "rowCount": 1
+            }
+          ]
+        },
+        {
+          "case": "price-unlimited",
+          "operation": "preview",
+          "startingState": "draft",
+          "searchId": "c36f0d9a-8637-461e-a937-c27f140b1784",
+          "requestId": "45b79ecb-ba3e-45c1-b8fd-fefeb857c563",
+          "method": "GET",
+          "status": 200,
+          "itemIds": [
+            3,
+            2,
+            1
+          ],
+          "trace": [
+            {
+              "type": "sql",
+              "site": "LOAD_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "rowCount": 1
+            },
+            {
+              "type": "decision",
+              "rule": "preview_ceiling",
+              "hasCeiling": false,
+              "site": "PREVIEW_CATEGORY"
+            },
+            {
+              "type": "sql",
+              "site": "PREVIEW_CATEGORY",
+              "variant": "price",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "stored",
+                  "field": "category",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [
+                {
+                  "field": "ceiling",
+                  "source": "stored",
+                  "effect": "site"
+                },
+                {
+                  "field": "sort",
+                  "source": "stored",
+                  "effect": "variant"
+                }
+              ],
+              "rowCount": 3
+            }
+          ]
+        },
+        {
+          "case": "price-unlimited",
+          "operation": "publish",
+          "startingState": "draft",
+          "searchId": "c36f0d9a-8637-461e-a937-c27f140b1784",
+          "requestId": "2e5f32d6-3217-4ca8-9b38-cdec1b970ebc",
+          "method": "POST",
+          "status": 200,
+          "trace": [
+            {
+              "type": "sql",
+              "site": "PUBLISH_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "affectedRows": 1
+            }
+          ]
+        },
+        {
+          "case": "price-unlimited",
+          "operation": "export",
+          "startingState": "published",
+          "searchId": "c36f0d9a-8637-461e-a937-c27f140b1784",
+          "requestId": "e5b7e735-c1ab-4b31-87c4-c6b42c4a6c69",
+          "method": "GET",
+          "status": 200,
+          "itemIds": [
+            3,
+            2,
+            1
+          ],
+          "trace": [
+            {
+              "type": "sql",
+              "site": "LOAD_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "rowCount": 1
+            },
+            {
+              "type": "decision",
+              "rule": "export_requires_published",
+              "state": "published",
+              "allowed": true
+            },
+            {
+              "type": "sql",
+              "site": "EXPORT_SEARCH",
+              "variant": "price",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "stored",
+                  "field": "category",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 2,
+                  "source": "stored",
+                  "field": "ceiling",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 3,
+                  "source": "stored",
+                  "field": "ceiling",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [
+                {
+                  "field": "state",
+                  "source": "stored",
+                  "effect": "execution_gate"
+                },
+                {
+                  "field": "sort",
+                  "source": "stored",
+                  "effect": "variant"
+                }
+              ],
+              "rowCount": 3
+            }
+          ]
+        },
+        {
+          "case": "name-budget",
+          "operation": "save",
+          "startingState": null,
+          "searchId": "46a73cf1-a583-4888-869a-f5c38893dd85",
+          "requestId": "3696db5c-6827-44be-86f3-e3153d614704",
+          "method": "PUT",
+          "status": 201,
+          "trace": [
+            {
+              "type": "sql",
+              "site": "SAVE_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 2,
+                  "source": "request",
+                  "field": "category",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 3,
+                  "source": "request",
+                  "field": "sort",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 4,
+                  "source": "request",
+                  "field": "ceiling",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "affectedRows": 1
+            }
+          ]
+        },
+        {
+          "case": "name-budget",
+          "operation": "load",
+          "startingState": "draft",
+          "searchId": "46a73cf1-a583-4888-869a-f5c38893dd85",
+          "requestId": "09d31b70-e52d-472e-ae2b-2d0a22d063da",
+          "method": "GET",
+          "status": 200,
+          "trace": [
+            {
+              "type": "sql",
+              "site": "LOAD_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "rowCount": 1
+            }
+          ]
+        },
+        {
+          "case": "name-budget",
+          "operation": "preview",
+          "startingState": "draft",
+          "searchId": "46a73cf1-a583-4888-869a-f5c38893dd85",
+          "requestId": "bdf7d72a-aeb5-4542-ab57-4ffd0c1fe171",
+          "method": "GET",
+          "status": 200,
+          "itemIds": [
+            2,
+            3
+          ],
+          "trace": [
+            {
+              "type": "sql",
+              "site": "LOAD_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "rowCount": 1
+            },
+            {
+              "type": "decision",
+              "rule": "preview_ceiling",
+              "hasCeiling": true,
+              "site": "PREVIEW_BUDGET"
+            },
+            {
+              "type": "sql",
+              "site": "PREVIEW_BUDGET",
+              "variant": "name",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "stored",
+                  "field": "category",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 2,
+                  "source": "stored",
+                  "field": "ceiling",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [
+                {
+                  "field": "ceiling",
+                  "source": "stored",
+                  "effect": "site"
+                },
+                {
+                  "field": "sort",
+                  "source": "stored",
+                  "effect": "variant"
+                }
+              ],
+              "rowCount": 2
+            }
+          ]
+        },
+        {
+          "case": "name-budget",
+          "operation": "publish",
+          "startingState": "draft",
+          "searchId": "46a73cf1-a583-4888-869a-f5c38893dd85",
+          "requestId": "3f2d7512-372e-4fe4-b3c2-44b5571d1baf",
+          "method": "POST",
+          "status": 200,
+          "trace": [
+            {
+              "type": "sql",
+              "site": "PUBLISH_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "affectedRows": 1
+            }
+          ]
+        },
+        {
+          "case": "name-budget",
+          "operation": "export",
+          "startingState": "published",
+          "searchId": "46a73cf1-a583-4888-869a-f5c38893dd85",
+          "requestId": "5bf3d9a8-aaa2-407a-a102-6ec0b05d826d",
+          "method": "GET",
+          "status": 200,
+          "itemIds": [
+            2,
+            3
+          ],
+          "trace": [
+            {
+              "type": "sql",
+              "site": "LOAD_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "rowCount": 1
+            },
+            {
+              "type": "decision",
+              "rule": "export_requires_published",
+              "state": "published",
+              "allowed": true
+            },
+            {
+              "type": "sql",
+              "site": "EXPORT_SEARCH",
+              "variant": "name",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "stored",
+                  "field": "category",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 2,
+                  "source": "stored",
+                  "field": "ceiling",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 3,
+                  "source": "stored",
+                  "field": "ceiling",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [
+                {
+                  "field": "state",
+                  "source": "stored",
+                  "effect": "execution_gate"
+                },
+                {
+                  "field": "sort",
+                  "source": "stored",
+                  "effect": "variant"
+                }
+              ],
+              "rowCount": 2
+            }
+          ]
+        },
+        {
+          "case": "price-budget",
+          "operation": "save",
+          "startingState": null,
+          "searchId": "87cf69ee-fc58-4eeb-8298-7e909f85139f",
+          "requestId": "8846bd15-e367-44b1-a9cd-86c1e0ceb2cc",
+          "method": "PUT",
+          "status": 201,
+          "trace": [
+            {
+              "type": "sql",
+              "site": "SAVE_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 2,
+                  "source": "request",
+                  "field": "category",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 3,
+                  "source": "request",
+                  "field": "sort",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 4,
+                  "source": "request",
+                  "field": "ceiling",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "affectedRows": 1
+            }
+          ]
+        },
+        {
+          "case": "price-budget",
+          "operation": "load",
+          "startingState": "draft",
+          "searchId": "87cf69ee-fc58-4eeb-8298-7e909f85139f",
+          "requestId": "192fcb67-bc00-400d-9afb-8cd6f5c56a8c",
+          "method": "GET",
+          "status": 200,
+          "trace": [
+            {
+              "type": "sql",
+              "site": "LOAD_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "rowCount": 1
+            }
+          ]
+        },
+        {
+          "case": "price-budget",
+          "operation": "preview",
+          "startingState": "draft",
+          "searchId": "87cf69ee-fc58-4eeb-8298-7e909f85139f",
+          "requestId": "5c9f9b03-2def-42ff-b270-1cfdc1610cb5",
+          "method": "GET",
+          "status": 200,
+          "itemIds": [
+            3,
+            2
+          ],
+          "trace": [
+            {
+              "type": "sql",
+              "site": "LOAD_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "rowCount": 1
+            },
+            {
+              "type": "decision",
+              "rule": "preview_ceiling",
+              "hasCeiling": true,
+              "site": "PREVIEW_BUDGET"
+            },
+            {
+              "type": "sql",
+              "site": "PREVIEW_BUDGET",
+              "variant": "price",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "stored",
+                  "field": "category",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 2,
+                  "source": "stored",
+                  "field": "ceiling",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [
+                {
+                  "field": "ceiling",
+                  "source": "stored",
+                  "effect": "site"
+                },
+                {
+                  "field": "sort",
+                  "source": "stored",
+                  "effect": "variant"
+                }
+              ],
+              "rowCount": 2
+            }
+          ]
+        },
+        {
+          "case": "price-budget",
+          "operation": "publish",
+          "startingState": "draft",
+          "searchId": "87cf69ee-fc58-4eeb-8298-7e909f85139f",
+          "requestId": "af1340e2-b89d-40db-b8e5-7f248e1312d1",
+          "method": "POST",
+          "status": 200,
+          "trace": [
+            {
+              "type": "sql",
+              "site": "PUBLISH_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "affectedRows": 1
+            }
+          ]
+        },
+        {
+          "case": "price-budget",
+          "operation": "export",
+          "startingState": "published",
+          "searchId": "87cf69ee-fc58-4eeb-8298-7e909f85139f",
+          "requestId": "89dbcc7e-8132-458a-a4e2-4cbcada04ce0",
+          "method": "GET",
+          "status": 200,
+          "itemIds": [
+            3,
+            2
+          ],
+          "trace": [
+            {
+              "type": "sql",
+              "site": "LOAD_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "rowCount": 1
+            },
+            {
+              "type": "decision",
+              "rule": "export_requires_published",
+              "state": "published",
+              "allowed": true
+            },
+            {
+              "type": "sql",
+              "site": "EXPORT_SEARCH",
+              "variant": "price",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "stored",
+                  "field": "category",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 2,
+                  "source": "stored",
+                  "field": "ceiling",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 3,
+                  "source": "stored",
+                  "field": "ceiling",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [
+                {
+                  "field": "state",
+                  "source": "stored",
+                  "effect": "execution_gate"
+                },
+                {
+                  "field": "sort",
+                  "source": "stored",
+                  "effect": "variant"
+                }
+              ],
+              "rowCount": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "suite": "state_matched_fixture",
+      "requests": [
+        {
+          "case": "name-unlimited",
+          "operation": "save",
+          "startingState": null,
+          "searchId": "ba8c182e-d3fd-4063-a766-3ee745e42208",
+          "requestId": "4d3e4985-3d7e-4ad1-bf2f-fdc3b455a661",
+          "method": "PUT",
+          "status": 201,
+          "trace": [
+            {
+              "type": "sql",
+              "site": "SAVE_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 2,
+                  "source": "request",
+                  "field": "category",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 3,
+                  "source": "request",
+                  "field": "sort",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 4,
+                  "source": "request",
+                  "field": "ceiling",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "affectedRows": 1
+            }
+          ]
+        },
+        {
+          "case": "name-unlimited",
+          "operation": "load",
+          "startingState": "draft",
+          "searchId": "6280a8c6-4341-491b-9963-5f9023aba65d",
+          "requestId": "aa52c9b6-ff9e-4ea2-9854-8224e07686b3",
+          "method": "GET",
+          "status": 200,
+          "trace": [
+            {
+              "type": "sql",
+              "site": "LOAD_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "rowCount": 1
+            }
+          ]
+        },
+        {
+          "case": "name-unlimited",
+          "operation": "preview",
+          "startingState": "draft",
+          "searchId": "bbee3242-102c-43ce-9780-79a1008b7316",
+          "requestId": "25bc8c34-aec6-436c-9ef1-0903fc1ae49d",
+          "method": "GET",
+          "status": 200,
+          "itemIds": [
+            1,
+            2,
+            3
+          ],
+          "trace": [
+            {
+              "type": "sql",
+              "site": "LOAD_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "rowCount": 1
+            },
+            {
+              "type": "decision",
+              "rule": "preview_ceiling",
+              "hasCeiling": false,
+              "site": "PREVIEW_CATEGORY"
+            },
+            {
+              "type": "sql",
+              "site": "PREVIEW_CATEGORY",
+              "variant": "name",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "stored",
+                  "field": "category",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [
+                {
+                  "field": "ceiling",
+                  "source": "stored",
+                  "effect": "site"
+                },
+                {
+                  "field": "sort",
+                  "source": "stored",
+                  "effect": "variant"
+                }
+              ],
+              "rowCount": 3
+            }
+          ]
+        },
+        {
+          "case": "name-unlimited",
+          "operation": "publish",
+          "startingState": "draft",
+          "searchId": "0c00e1ab-0ac8-4876-a073-63cfe7332ebd",
+          "requestId": "dcfeb31e-af35-4402-abe8-aa45af4fac1c",
+          "method": "POST",
+          "status": 200,
+          "trace": [
+            {
+              "type": "sql",
+              "site": "PUBLISH_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "affectedRows": 1
+            }
+          ]
+        },
+        {
+          "case": "name-unlimited",
+          "operation": "export",
+          "startingState": "published",
+          "searchId": "4588d7ef-df8f-4856-a845-3f6dd040f82c",
+          "requestId": "ac1f4fac-5497-4068-96f5-5d91a2807416",
+          "method": "GET",
+          "status": 200,
+          "itemIds": [
+            1,
+            2,
+            3
+          ],
+          "trace": [
+            {
+              "type": "sql",
+              "site": "LOAD_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "rowCount": 1
+            },
+            {
+              "type": "decision",
+              "rule": "export_requires_published",
+              "state": "published",
+              "allowed": true
+            },
+            {
+              "type": "sql",
+              "site": "EXPORT_SEARCH",
+              "variant": "name",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "stored",
+                  "field": "category",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 2,
+                  "source": "stored",
+                  "field": "ceiling",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 3,
+                  "source": "stored",
+                  "field": "ceiling",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [
+                {
+                  "field": "state",
+                  "source": "stored",
+                  "effect": "execution_gate"
+                },
+                {
+                  "field": "sort",
+                  "source": "stored",
+                  "effect": "variant"
+                }
+              ],
+              "rowCount": 3
+            }
+          ]
+        },
+        {
+          "case": "price-unlimited",
+          "operation": "save",
+          "startingState": null,
+          "searchId": "f9abbd1e-c075-4f86-ab19-8bac649d8aa0",
+          "requestId": "5e9b1225-2546-4e44-840c-1f9332f23acc",
+          "method": "PUT",
+          "status": 201,
+          "trace": [
+            {
+              "type": "sql",
+              "site": "SAVE_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 2,
+                  "source": "request",
+                  "field": "category",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 3,
+                  "source": "request",
+                  "field": "sort",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 4,
+                  "source": "request",
+                  "field": "ceiling",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "affectedRows": 1
+            }
+          ]
+        },
+        {
+          "case": "price-unlimited",
+          "operation": "load",
+          "startingState": "draft",
+          "searchId": "2a7df182-6c6c-40e7-b747-8a71f5bdec6e",
+          "requestId": "00e1be37-d5ce-4ab8-90f9-299ef8cc967e",
+          "method": "GET",
+          "status": 200,
+          "trace": [
+            {
+              "type": "sql",
+              "site": "LOAD_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "rowCount": 1
+            }
+          ]
+        },
+        {
+          "case": "price-unlimited",
+          "operation": "preview",
+          "startingState": "draft",
+          "searchId": "9b33af5b-1a1f-46ce-9c7e-44f4e50bea7c",
+          "requestId": "39e0847f-9ec2-4bd3-91e8-77ff0e628ab6",
+          "method": "GET",
+          "status": 200,
+          "itemIds": [
+            3,
+            2,
+            1
+          ],
+          "trace": [
+            {
+              "type": "sql",
+              "site": "LOAD_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "rowCount": 1
+            },
+            {
+              "type": "decision",
+              "rule": "preview_ceiling",
+              "hasCeiling": false,
+              "site": "PREVIEW_CATEGORY"
+            },
+            {
+              "type": "sql",
+              "site": "PREVIEW_CATEGORY",
+              "variant": "price",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "stored",
+                  "field": "category",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [
+                {
+                  "field": "ceiling",
+                  "source": "stored",
+                  "effect": "site"
+                },
+                {
+                  "field": "sort",
+                  "source": "stored",
+                  "effect": "variant"
+                }
+              ],
+              "rowCount": 3
+            }
+          ]
+        },
+        {
+          "case": "price-unlimited",
+          "operation": "publish",
+          "startingState": "draft",
+          "searchId": "27a6c69b-b91c-413e-9db6-76cbfd457ba9",
+          "requestId": "32634865-3bb8-4f1c-a6be-9c33ed799141",
+          "method": "POST",
+          "status": 200,
+          "trace": [
+            {
+              "type": "sql",
+              "site": "PUBLISH_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "affectedRows": 1
+            }
+          ]
+        },
+        {
+          "case": "price-unlimited",
+          "operation": "export",
+          "startingState": "published",
+          "searchId": "579747cb-d0c7-4dd5-a0ac-886a06c08e17",
+          "requestId": "c07d96de-0e56-4207-ad14-0cd3d045439f",
+          "method": "GET",
+          "status": 200,
+          "itemIds": [
+            3,
+            2,
+            1
+          ],
+          "trace": [
+            {
+              "type": "sql",
+              "site": "LOAD_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "rowCount": 1
+            },
+            {
+              "type": "decision",
+              "rule": "export_requires_published",
+              "state": "published",
+              "allowed": true
+            },
+            {
+              "type": "sql",
+              "site": "EXPORT_SEARCH",
+              "variant": "price",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "stored",
+                  "field": "category",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 2,
+                  "source": "stored",
+                  "field": "ceiling",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 3,
+                  "source": "stored",
+                  "field": "ceiling",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [
+                {
+                  "field": "state",
+                  "source": "stored",
+                  "effect": "execution_gate"
+                },
+                {
+                  "field": "sort",
+                  "source": "stored",
+                  "effect": "variant"
+                }
+              ],
+              "rowCount": 3
+            }
+          ]
+        },
+        {
+          "case": "name-budget",
+          "operation": "save",
+          "startingState": null,
+          "searchId": "4e21e649-46be-4711-b17a-97a0f708e5a2",
+          "requestId": "c8ec123e-119f-4636-b20f-b1f66ad4dd98",
+          "method": "PUT",
+          "status": 201,
+          "trace": [
+            {
+              "type": "sql",
+              "site": "SAVE_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 2,
+                  "source": "request",
+                  "field": "category",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 3,
+                  "source": "request",
+                  "field": "sort",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 4,
+                  "source": "request",
+                  "field": "ceiling",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "affectedRows": 1
+            }
+          ]
+        },
+        {
+          "case": "name-budget",
+          "operation": "load",
+          "startingState": "draft",
+          "searchId": "5e223211-0bc4-4380-9fdf-ff21f99245cc",
+          "requestId": "be230cd5-2ff3-4cb6-a515-99e348593cde",
+          "method": "GET",
+          "status": 200,
+          "trace": [
+            {
+              "type": "sql",
+              "site": "LOAD_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "rowCount": 1
+            }
+          ]
+        },
+        {
+          "case": "name-budget",
+          "operation": "preview",
+          "startingState": "draft",
+          "searchId": "68a905ad-f3e0-43e2-80c2-82562aa8be0d",
+          "requestId": "d349354a-962e-49ba-89fb-dac68726dd82",
+          "method": "GET",
+          "status": 200,
+          "itemIds": [
+            2,
+            3
+          ],
+          "trace": [
+            {
+              "type": "sql",
+              "site": "LOAD_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "rowCount": 1
+            },
+            {
+              "type": "decision",
+              "rule": "preview_ceiling",
+              "hasCeiling": true,
+              "site": "PREVIEW_BUDGET"
+            },
+            {
+              "type": "sql",
+              "site": "PREVIEW_BUDGET",
+              "variant": "name",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "stored",
+                  "field": "category",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 2,
+                  "source": "stored",
+                  "field": "ceiling",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [
+                {
+                  "field": "ceiling",
+                  "source": "stored",
+                  "effect": "site"
+                },
+                {
+                  "field": "sort",
+                  "source": "stored",
+                  "effect": "variant"
+                }
+              ],
+              "rowCount": 2
+            }
+          ]
+        },
+        {
+          "case": "name-budget",
+          "operation": "publish",
+          "startingState": "draft",
+          "searchId": "ad02d874-f508-4fc2-9378-d177ed3b7b6e",
+          "requestId": "7cb28f4d-a762-4aab-b1fc-387bccaccaf8",
+          "method": "POST",
+          "status": 200,
+          "trace": [
+            {
+              "type": "sql",
+              "site": "PUBLISH_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "affectedRows": 1
+            }
+          ]
+        },
+        {
+          "case": "name-budget",
+          "operation": "export",
+          "startingState": "published",
+          "searchId": "264fa998-0b60-4faf-b971-dade7b8d72e4",
+          "requestId": "d021d5a3-a87f-4d81-9a44-c7f493bb8919",
+          "method": "GET",
+          "status": 200,
+          "itemIds": [
+            2,
+            3
+          ],
+          "trace": [
+            {
+              "type": "sql",
+              "site": "LOAD_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "rowCount": 1
+            },
+            {
+              "type": "decision",
+              "rule": "export_requires_published",
+              "state": "published",
+              "allowed": true
+            },
+            {
+              "type": "sql",
+              "site": "EXPORT_SEARCH",
+              "variant": "name",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "stored",
+                  "field": "category",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 2,
+                  "source": "stored",
+                  "field": "ceiling",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 3,
+                  "source": "stored",
+                  "field": "ceiling",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [
+                {
+                  "field": "state",
+                  "source": "stored",
+                  "effect": "execution_gate"
+                },
+                {
+                  "field": "sort",
+                  "source": "stored",
+                  "effect": "variant"
+                }
+              ],
+              "rowCount": 2
+            }
+          ]
+        },
+        {
+          "case": "price-budget",
+          "operation": "save",
+          "startingState": null,
+          "searchId": "8c3aec9e-c908-4e82-b415-1c7b84f33e6e",
+          "requestId": "d0cd4705-689b-4b2a-874a-efa4df55e57d",
+          "method": "PUT",
+          "status": 201,
+          "trace": [
+            {
+              "type": "sql",
+              "site": "SAVE_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 2,
+                  "source": "request",
+                  "field": "category",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 3,
+                  "source": "request",
+                  "field": "sort",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 4,
+                  "source": "request",
+                  "field": "ceiling",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "affectedRows": 1
+            }
+          ]
+        },
+        {
+          "case": "price-budget",
+          "operation": "load",
+          "startingState": "draft",
+          "searchId": "f55c9197-987b-4107-be98-ff42df8c38d9",
+          "requestId": "f976ce5b-5953-4b4b-b491-f5f846d3d8a9",
+          "method": "GET",
+          "status": 200,
+          "trace": [
+            {
+              "type": "sql",
+              "site": "LOAD_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "rowCount": 1
+            }
+          ]
+        },
+        {
+          "case": "price-budget",
+          "operation": "preview",
+          "startingState": "draft",
+          "searchId": "16d94d34-62b9-4170-8869-99bf5c9bd94f",
+          "requestId": "0a81c695-961d-46a9-b55c-65de9254c6e3",
+          "method": "GET",
+          "status": 200,
+          "itemIds": [
+            3,
+            2
+          ],
+          "trace": [
+            {
+              "type": "sql",
+              "site": "LOAD_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "rowCount": 1
+            },
+            {
+              "type": "decision",
+              "rule": "preview_ceiling",
+              "hasCeiling": true,
+              "site": "PREVIEW_BUDGET"
+            },
+            {
+              "type": "sql",
+              "site": "PREVIEW_BUDGET",
+              "variant": "price",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "stored",
+                  "field": "category",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 2,
+                  "source": "stored",
+                  "field": "ceiling",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [
+                {
+                  "field": "ceiling",
+                  "source": "stored",
+                  "effect": "site"
+                },
+                {
+                  "field": "sort",
+                  "source": "stored",
+                  "effect": "variant"
+                }
+              ],
+              "rowCount": 2
+            }
+          ]
+        },
+        {
+          "case": "price-budget",
+          "operation": "publish",
+          "startingState": "draft",
+          "searchId": "98b04dfa-2a57-4f4c-a55b-411e56996148",
+          "requestId": "0e199e62-871d-4cda-b313-1fe1784f1ff4",
+          "method": "POST",
+          "status": 200,
+          "trace": [
+            {
+              "type": "sql",
+              "site": "PUBLISH_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "affectedRows": 1
+            }
+          ]
+        },
+        {
+          "case": "price-budget",
+          "operation": "export",
+          "startingState": "published",
+          "searchId": "a5323e6a-f350-4dd7-8740-75d5d16fa569",
+          "requestId": "122cf8d9-be01-4d18-8a48-1d28d956f8f5",
+          "method": "GET",
+          "status": 200,
+          "itemIds": [
+            3,
+            2
+          ],
+          "trace": [
+            {
+              "type": "sql",
+              "site": "LOAD_SEARCH",
+              "variant": "fixed",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "request",
+                  "field": "id",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [],
+              "rowCount": 1
+            },
+            {
+              "type": "decision",
+              "rule": "export_requires_published",
+              "state": "published",
+              "allowed": true
+            },
+            {
+              "type": "sql",
+              "site": "EXPORT_SEARCH",
+              "variant": "price",
+              "protocol": "prepared",
+              "bindings": [
+                {
+                  "slot": 1,
+                  "source": "stored",
+                  "field": "category",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 2,
+                  "source": "stored",
+                  "field": "ceiling",
+                  "treatment": "bound"
+                },
+                {
+                  "slot": 3,
+                  "source": "stored",
+                  "field": "ceiling",
+                  "treatment": "bound"
+                }
+              ],
+              "selectors": [
+                {
+                  "field": "state",
+                  "source": "stored",
+                  "effect": "execution_gate"
+                },
+                {
+                  "field": "sort",
+                  "source": "stored",
+                  "effect": "variant"
+                }
+              ],
+              "rowCount": 2
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

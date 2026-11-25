@@ -1,0 +1,7 @@
+
+> sqli-reuse-study@1.0.0 study
+> node --env-file-if-exists=.env src/cli.js study --out nghien-cuu/ket-qua/RQ2/20261125-210226-rang-buoc/du-lieu-goc
+
+.env not found. Continuing without it.
+Z:\SQLi2\thuc-nghiem\nghien-cuu\ket-qua\RQ2\20261125-210226-rang-buoc\du-lieu-goc\run-BX1Q5w\report.md
+Z:\SQLi2\thuc-nghiem\nghien-cuu\ket-qua\RQ2\20261125-210226-rang-buoc\du-lieu-goc\run-BX1Q5w\report.json

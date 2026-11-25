@@ -1,0 +1,12 @@
+2026-11-25T21:04:04.4240325+07:00
+node=v24.21.0
+npm=11.19.0
+mysql2=3.24.6
+npm.cmd test
+exit=0
+mysqld --no-defaults --initialize-insecure --datadir=<scratch>/data --log-error=<scratch>/mysql-error.log exit=0
+mysqld --no-defaults --datadir=<scratch>/data --log-error=<scratch>/mysql-error.log --init-file=<scratch>/bootstrap.sql --bind-address=127.0.0.1 --port=56674 --mysqlx=OFF --skip-log-bin --skip-name-resolve
+Stop-Process was requested for the dedicated MySQL process.
+Authenticated MySQL metadata was not obtained. No integrated study was started.
+The first cleanup attempt did not confirm process termination and directory validation failed.
+Follow-up cleanup: mysqladmin shutdown exit=1, mysqld confirmed stopped, and the validated isolated data directory was removed.

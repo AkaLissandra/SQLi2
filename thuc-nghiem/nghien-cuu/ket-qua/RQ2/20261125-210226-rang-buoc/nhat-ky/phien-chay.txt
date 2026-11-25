@@ -1,0 +1,18 @@
+2026-11-25T21:05:50.1498519+07:00
+node=v24.21.0
+npm=11.19.0
+mysql2=3.24.6
+npm.cmd test
+exit=0
+mysqld --no-defaults --initialize-insecure --datadir=<scratch>/data --log-error=<scratch>/mysql-error.log exit=0
+mysqld --no-defaults --datadir=<scratch>/data --log-error=<scratch>/mysql-error.log --init-file=<scratch>/bootstrap.sql --bind-address=127.0.0.1 --port=57181 --mysqlx=OFF --skip-log-bin --skip-name-resolve
+mysql metadata exit=0 (version, database, port, bind_address, autocommit)
+8.0.46	sqli_study_rq2	57181	127.0.0.1	1
+npm.cmd run init
+exit=0
+npm.cmd run study -- --out nghien-cuu/ket-qua/RQ2/20261125-210226-rang-buoc/du-lieu-goc
+exit=0
+mysql seed and cleanup check exit=0 (items, searches)
+4	0
+mysqladmin shutdown exit=0; stopped=True
+Isolated MySQL data directory removed.

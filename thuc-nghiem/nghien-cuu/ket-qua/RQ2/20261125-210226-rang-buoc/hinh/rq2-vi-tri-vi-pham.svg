@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="570" viewBox="0 0 1200 570" role="img" aria-labelledby="title desc">
+  <title id="title">RQ2 · Vị trí vi phạm tiêu chí tách dữ liệu khỏi cấu trúc SQL</title>
+  <desc id="desc">Mô hình A có 3/3 vị trí vi phạm. Thực thi B có 0/3. Chênh lệch 3 vị trí.</desc>
+  <rect width="1200" height="570" fill="#fff"/>
+  <g font-family="Segoe UI, Arial, sans-serif" fill="#172c37">
+    <text x="61" y="75" font-size="38" font-weight="700">Vị trí vi phạm tiêu chí tách dữ liệu khỏi cấu trúc SQL</text>
+    <text x="63" y="123" font-size="25" fill="#415b67">RQ2 · Nhóm chain · 3 vị trí tái sử dụng được quan sát</text>
+    <g stroke="#d8e2e6" stroke-width="2">
+      <line x1="505" y1="174" x2="505" y2="404"/><line x1="698.3333333333334" y1="174" x2="698.3333333333334" y2="404"/><line x1="891.6666666666667" y1="174" x2="891.6666666666667" y2="404"/><line x1="1085" y1="174" x2="1085" y2="404"/>
+    </g>
+    <g font-size="26" font-weight="700">
+      <text x="63" y="221">A · Mô hình</text>
+      <text x="63" y="343">B · Thực thi</text>
+    </g>
+    <g font-size="22" fill="#415b67">
+      <text x="63" y="254">Chỉ ràng buộc khi ghi</text>
+      <text x="63" y="376">Ràng buộc khi ghi và tái sử dụng</text>
+    </g>
+    <rect x="505" y="201" width="580" height="55" rx="5" fill="#266575"/>
+    <rect x="505" y="323" width="0" height="55" rx="5" fill="#266575"/>
+    <text x="1100" y="240" font-size="30" font-weight="700">3</text>
+    <text x="520" y="362" font-size="30" font-weight="700">0</text>
+    <g font-size="21" text-anchor="middle" fill="#415b67">
+      <text x="505" y="435">0</text><text x="698.3333333333334" y="435">1</text><text x="891.6666666666667" y="435">2</text><text x="1085" y="435">3</text>
+      <text x="795" y="475">Số vị trí vi phạm</text>
+    </g>
+    <text x="63" y="527" font-size="21" fill="#415b67">Nguồn · report.json, nhóm chain, cùng dấu vết MySQL cho cả hai chính sách</text>
+  </g>
+</svg>

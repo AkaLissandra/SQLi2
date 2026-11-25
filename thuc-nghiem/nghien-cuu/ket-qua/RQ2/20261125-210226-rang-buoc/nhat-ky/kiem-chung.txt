@@ -1,0 +1,47 @@
+{
+  "source": "du-lieu-goc/run-BX1Q5w/report.json",
+  "requestCount": 60,
+  "chainRequests": 20,
+  "sqlEvents": 28,
+  "observedSqlSites": [
+    "SAVE_SEARCH",
+    "LOAD_SEARCH",
+    "PREVIEW_CATEGORY",
+    "PUBLISH_SEARCH",
+    "EXPORT_SEARCH",
+    "PREVIEW_BUDGET"
+  ],
+  "reuseSites": [
+    "PREVIEW_CATEGORY",
+    "PREVIEW_BUDGET",
+    "EXPORT_SEARCH"
+  ],
+  "missingReuseSites": [],
+  "missingReuseVariants": [],
+  "reuseEvents": 8,
+  "variantCounts": {
+    "PREVIEW_CATEGORY/name": 1,
+    "EXPORT_SEARCH/name": 2,
+    "PREVIEW_CATEGORY/price": 1,
+    "EXPORT_SEARCH/price": 2,
+    "PREVIEW_BUDGET/name": 1,
+    "PREVIEW_BUDGET/price": 1
+  },
+  "evidenceRows": 50,
+  "storedRows": 18,
+  "A": [
+    "PREVIEW_CATEGORY",
+    "EXPORT_SEARCH",
+    "PREVIEW_BUDGET"
+  ],
+  "B": [],
+  "aOnly": [
+    "PREVIEW_CATEGORY",
+    "EXPORT_SEARCH",
+    "PREVIEW_BUDGET"
+  ],
+  "bOnly": [],
+  "reduction": 3,
+  "inconsistent": [],
+  "sameAsCli": true
+}
