@@ -1,0 +1,5 @@
+.env
+.mysql-verification/
+.npm-cache/
+node_modules/
+results/

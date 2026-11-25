@@ -1,0 +1,16 @@
+{
+  "name": "sqli-reuse-study",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22.9.0" },
+  "scripts": {
+    "init": "node --env-file-if-exists=.env src/cli.js init",
+    "start": "node --env-file-if-exists=.env src/cli.js start",
+    "study": "node --env-file-if-exists=.env src/cli.js study",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "mysql2": "3.24.6"
+  }
+}
